@@ -77,6 +77,11 @@ src/dnsmasq/dnsmasq.c
 src/dnsmasq/dnssec.c
       my_syslog(LOG_WARNING, _("Insecure DS reply received for %s, check domain configuration and upstream DNS server DNSSEC support"), name);
 src/dnsmasq/forward.c
+	      my_syslog(LOG_WARNING, "Sending packet for %s upstream failed: %s",
+	                daemon->namebuff, strerror(errno));
+src/dnsmasq/forward.c
+  my_syslog(LOG_WARNING, "Tried all available servers over UDP, none worked, returning REFUSED");
+src/dnsmasq/forward.c
 	  my_syslog(LOG_WARNING, _("discarding DNS reply: subnet option mismatch"));
 src/dnsmasq/forward.c
       my_syslog(LOG_WARNING, _("nameserver %s refused to do a recursive query"), daemon->namebuff);
@@ -88,6 +93,8 @@ src/dnsmasq/forward.c
 	      my_syslog(LOG_WARNING, _("Ignoring query from non-local network"));
 src/dnsmasq/forward.c
 	  my_syslog(LOG_WARNING, _("Ignoring query from non-local network"));
+src/dnsmasq/forward.c
+		      my_syslog(LOG_WARNING, "Tried all available servers over TCP, none worked, returning REFUSED");
 src/dnsmasq/forward.c
 	my_syslog(LOG_WARNING, _("Maximum number of concurrent DNS queries reached (max: %d)"), daemon->ftabsize);
 src/dnsmasq/forward.c

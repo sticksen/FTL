@@ -558,7 +558,6 @@ static int forward_query(int udpfd, union mysockaddr *udpaddr,
       
       if (++start == last)
       {
-	my_syslog(LOG_WARNING, "Tried all available servers over UDP, none worked, returning REFUSED");
 	break;
       }
     }
@@ -567,6 +566,7 @@ static int forward_query(int udpfd, union mysockaddr *udpaddr,
     return 1;
   
   /* could not send on, prepare to return */ 
+  my_syslog(LOG_WARNING, "Tried all available servers over UDP, none worked, returning REFUSED");
   header->id = htons(forward->frec_src.orig_id);
   free_frec(forward); /* cancel */
   ede = EDE_NETERR;
