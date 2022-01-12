@@ -547,10 +547,20 @@ static int forward_query(int udpfd, union mysockaddr *udpaddr,
 		break;
 	      forward->forwardall++;
 	    }
+	    else
+	    {
+	      if (!gotname)
+		strcpy(daemon->namebuff, "<query>");
+	      my_syslog(LOG_WARNING, "Sending packet for %s upstream failed: %s",
+	                daemon->namebuff, strerror(errno));
+	    }
 	}
       
       if (++start == last)
+      {
+	my_syslog(LOG_WARNING, "Tried all available servers over UDP, none worked, returning REFUSED");
 	break;
+      }
     }
   
   if (forwarded || is_dnssec)
@@ -2235,6 +2245,7 @@ unsigned char *tcp_request(int confd, time_t now,
 		  /* Loop round available servers until we succeed in connecting to one. */
 		  if ((m = tcp_talk(first, last, start, packet, size, have_mark, mark, &serv)) == 0)
 		    {
+		      my_syslog(LOG_WARNING, "Tried all available servers over TCP, none worked, returning REFUSED");
 		      ede = EDE_NETERR;
 		      break;
 		    }
