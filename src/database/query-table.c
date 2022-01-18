@@ -569,19 +569,19 @@ bool add_query_storage_columns(sqlite3 *db)
 		free(schema);
 
 	// Add additional columns to the query_storage table
-	SQL_bool(db, "ALTER TABLE query_storage ADD COLUMN reply_type INTEGER");
+	SQL_bool(db, "ALTER TABLE query_storage ADD COLUMN reply_type INTEGER;");
 	schema = db_query_string(db, "SELECT sql FROM sqlite_master WHERE name = 'query_storage';");
 	logg("Schema after first ALTER TABLE: %s", schema);
 	if(schema)
 		free(schema);
 
-	SQL_bool(db, "ALTER TABLE query_storage ADD COLUMN reply_time REAL");
+	SQL_bool(db, "ALTER TABLE query_storage ADD COLUMN reply_time REAL;");
 	schema = db_query_string(db, "SELECT sql FROM sqlite_master WHERE name = 'query_storage';");
 	logg("Schema after second ALTER TABLE: %s", schema);
 	if(schema)
 		free(schema);
 
-	SQL_bool(db, "ALTER TABLE query_storage ADD COLUMN dnssec INTEGER");
+	SQL_bool(db, "ALTER TABLE query_storage ADD COLUMN dnssec INTEGER;");
 	schema = db_query_string(db, "SELECT sql FROM sqlite_master WHERE name = 'query_storage';");
 	logg("Schema after third ALTER TABLE: %s", schema);
 	if(schema)
