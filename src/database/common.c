@@ -575,6 +575,53 @@ int db_query_int(sqlite3 *db, const char* querystr)
 	return result;
 }
 
+char *db_query_string(sqlite3 *db, const char* querystr)
+{
+	// Return early if the database is known to be broken
+	if(FTLDBerror())
+		return NULL;
+
+	if(config.debug & DEBUG_DATABASE)
+	{
+		logg("dbquery: \"%s\"", querystr);
+	}
+
+	sqlite3_stmt* stmt;
+	int rc = sqlite3_prepare_v2(db, querystr, -1, &stmt, NULL);
+	if( rc != SQLITE_OK )
+	{
+		if( rc != SQLITE_BUSY )
+			logg("Encountered prepare error in db_query_int(\"%s\"): %s", querystr, sqlite3_errstr(rc));
+		checkFTLDBrc(rc);
+		return NULL;
+	}
+
+	rc = sqlite3_step(stmt);
+
+	char *result = NULL;
+	if( rc == SQLITE_ROW )
+	{
+		result = strdup((char*)sqlite3_column_text(stmt, 0));
+		if(config.debug & DEBUG_DATABASE)
+			logg("         ---> Result \"%s\"", result);
+	}
+	else if( rc == SQLITE_DONE )
+	{
+		// No rows available
+		if(config.debug & DEBUG_DATABASE)
+			logg("         ---> No data");
+	}
+	else
+	{
+		logg("Encountered step error in db_query_int(\"%s\"): %s", querystr, sqlite3_errstr(rc));
+		checkFTLDBrc(rc);
+		return NULL;
+	}
+
+	sqlite3_finalize(stmt);
+	return result;
+}
+
 long int get_max_query_ID(sqlite3 *db)
 {
 	// Return early if the database is known to be broken

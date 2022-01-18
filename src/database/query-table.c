@@ -563,10 +563,29 @@ bool add_query_storage_columns(sqlite3 *db)
 	// Start transaction of database update
 	SQL_bool(db, "BEGIN TRANSACTION");
 
+	char *schema = db_query_string(db, "SELECT sql FROM sqlite_master WHERE name = 'query_storage';");
+	logg("Schema at beginning: %s", schema);
+	if(schema)
+		free(schema);
+
 	// Add additional columns to the query_storage table
 	SQL_bool(db, "ALTER TABLE query_storage ADD COLUMN reply_type INTEGER");
+	schema = db_query_string(db, "SELECT sql FROM sqlite_master WHERE name = 'query_storage';");
+	logg("Schema after first ALTER TABLE: %s", schema);
+	if(schema)
+		free(schema);
+
 	SQL_bool(db, "ALTER TABLE query_storage ADD COLUMN reply_time REAL");
+	schema = db_query_string(db, "SELECT sql FROM sqlite_master WHERE name = 'query_storage';");
+	logg("Schema after second ALTER TABLE: %s", schema);
+	if(schema)
+		free(schema);
+
 	SQL_bool(db, "ALTER TABLE query_storage ADD COLUMN dnssec INTEGER");
+	schema = db_query_string(db, "SELECT sql FROM sqlite_master WHERE name = 'query_storage';");
+	logg("Schema after third ALTER TABLE: %s", schema);
+	if(schema)
+		free(schema);
 
 	// Update VIEW queries
 	SQL_bool(db, "DROP VIEW queries");
@@ -588,6 +607,10 @@ bool add_query_storage_columns(sqlite3 *db)
 
 	// Finish transaction
 	SQL_bool(db, "COMMIT");
+	schema = db_query_string(db, "SELECT sql FROM sqlite_master WHERE name = 'query_storage';");
+	logg("Schema after COMMIT: %s", schema);
+	if(schema)
+		free(schema);
 
 	return true;
 }
