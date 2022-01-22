@@ -22,3 +22,7 @@ tools/macvendor.db
 
 # Test dependencies
 /node_modules/
+
+# Test artifacts
+dig.log
+ptr.log
