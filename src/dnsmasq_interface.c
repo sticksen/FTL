@@ -131,14 +131,27 @@ void FTL_hook(unsigned int flags, char *name, union all_addr *addr, char *arg, i
 
 		const ednsData edns = { 0 };
 
-		// Type is overloaded with port since 2d65d55, so we have to
-		// derive the real query type from the arg string
 		unsigned short qtype = type;
-		if(strcmp(arg, "dnssec-query[DNSKEY]") == 0)
-			qtype = T_DNSKEY;
-		else if(strcmp(arg, "dnssec-query[DS]") == 0)
-			qtype = T_DS;
-		arg = (char*)"dnssec-query";
+		if(flags & F_SERVER)
+		{
+			// Type is overloaded with port since 2d65d55, so we have to
+			// derive the real query type from the arg string
+			if(strstr(arg, "[DNSKEY]"))
+				qtype = T_DNSKEY;
+			else if(strstr(arg, "[DS]"))
+				qtype = T_DS;
+		}
+		else
+		{
+			// Port is not available as we're using the type field for the
+			// query type
+			type = daemon->port;
+		}
+
+		// Strip query type, e.g, dnssec-query[DNSKEY]
+		if(strstr(arg, "dnssec-query"))
+			arg = (char*)"dnssec-query";
+		// This is not needed for "dnssec-retry"
 
 		_FTL_new_query(flags, name, NULL, arg, qtype, id, &edns, INTERNAL, file, line);
 		// forwarded upstream (type is used to store the upstream port)
@@ -2156,6 +2169,12 @@ static void FTL_reply(const unsigned int flags, const char *name, const union al
 		// Save reply type and update individual reply counters
 		query_set_reply(flags, 0, addr, query, response);
 	}
+	else if(strcmp(arg, "duplicate") == 0)
+	{
+		// query is duplicate, it will be handled by FTL_multiple_replies()
+		if(config.debug & DEBUG_QUERIES)
+			logg("**** query has been skipped, it is a duplicate");
+	}
 	else if(isExactMatch && !query->flags.complete)
 	{
 		logg("*************************** unknown REPLY ***************************");
@@ -3246,11 +3265,19 @@ void FTL_multiple_replies(const int id, int *firstID)
 
 	// Don't process self-duplicates
 	if(*firstID == id)
+	{
+		if(config.debug & DEBUG_QUERIES)
+			logg("**** skipped: Ignoring self-duplicate");
 		return;
+	}
 
 	// Skip if the original query was not found in FTL's memory
 	if(*firstID == -2)
+	{
+		if(config.debug & DEBUG_QUERIES)
+			logg("**** skipped: Original query was not found");
 		return;
+	}
 
 	// Lock shared memory
 	lock_shm();
@@ -3299,6 +3326,8 @@ void FTL_multiple_replies(const int id, int *firstID)
 	duplicated_query->reply = source_query->reply;
 	duplicated_query->dnssec = source_query->dnssec;
 	duplicated_query->flags.complete = true;
+	duplicated_query->flags.response_calculated = true;
+	duplicated_query->response = source_query->response;
 	duplicated_query->CNAME_domainID = source_query->CNAME_domainID;
 
 	// The original query may have been blocked during CNAME inspection,

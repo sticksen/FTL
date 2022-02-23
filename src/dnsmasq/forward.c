@@ -1267,6 +1267,8 @@ static void return_reply(time_t now, struct frec *forward, struct dns_header *he
 	  nn = resize_packet(header, nn, NULL, 0);
 	}
 #endif
+      /* Pi-hole modification */
+      int first_ID = -1;
       
       for (src = &forward->frec_src; src; src = src->next)
 	{
@@ -1286,8 +1288,6 @@ static void return_reply(time_t now, struct frec *forward, struct dns_header *he
 	    }
 #endif
 	  
-	  /* Pi-hole modification */
-	  int first_ID = -1;
 	  
 	  send_from(src->fd, option_bool(OPT_NOWILD) || option_bool (OPT_CLEVERBIND), daemon->packet, nn, 
 		    &src->source, &src->dest, src->iface);
