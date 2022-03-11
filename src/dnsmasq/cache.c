@@ -16,6 +16,7 @@
 
 #include "dnsmasq.h"
 #include "../dnsmasq_interface.h"
+#include "../log.h"
 
 static struct crec *cache_head = NULL, *cache_tail = NULL, **hash_table = NULL;
 #ifdef HAVE_DHCP
@@ -912,6 +913,8 @@ struct crec *cache_find_by_name(struct crec *crecp, char *name, time_t now, unsi
 		  */
 		  if (insert && (crecp->flags & (F_REVERSE | F_IMMORTAL)) == ins_flags)
 		    {
+                      if(crecp->hash_next && *insert)
+		        logg("Reordering cache for %s // %p -> %p", strlen(name) > 0 ? name : ".", crecp->hash_next, *insert);
 		      *up = crecp->hash_next;
 		      crecp->hash_next = *insert;
 		      *insert = crecp;
