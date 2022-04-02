@@ -45,6 +45,9 @@
 #include <ifaddrs.h>
 #include <net/if.h>
 
+#define ENTER() { logg("Entering function at %s:%d", __FILE__, __LINE__); }
+#define STILL() { logg("Still in function at %s:%d", __FILE__, __LINE__); }
+
 // Define MIN and MAX macros, use them only when x and y are of the same type
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 // MIN(x,y) is already defined in dnsmasq.h
