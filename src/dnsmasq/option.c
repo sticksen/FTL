@@ -1102,6 +1102,7 @@ static struct dhcp_netid *dhcp_netid_create(const char *net, struct dhcp_netid *
   tt = opt_malloc(sizeof (struct dhcp_netid));
   tt->net = opt_string_alloc(net);
   tt->next = next;
+  logg("dhcp_netid_create(): Creating %p with net = %p (%s)", tt, tt->net, net);
   return tt;
 }
 
@@ -1111,6 +1112,9 @@ static void dhcp_netid_free(struct dhcp_netid *nid)
     {
       struct dhcp_netid *tmp = nid;
       nid = nid->next;
+      logg("dhcp_netid_free(): Setting nid %p to %p", tmp, nid);
+      logg("dhcp_netid_free(): Freeing tmp = %p", tmp);
+      logg("dhcp_netid_free(): Freeing tmp->net = %p", tmp->net);
       free(tmp->net);
       free(tmp);
     }
@@ -3923,6 +3927,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
 	new->wildcard = 0;
 	new->netid = opt_malloc(sizeof(struct dhcp_netid));
 	new->netid->net = opt_string_alloc(set_prefix(arg));
+	logg("LOPT_NAME_MATCH: Creating %p with net = %p (%s)", new->netid, new->netid->net, arg);
 
 	if (comma[len-1] == '*')
 	  {
