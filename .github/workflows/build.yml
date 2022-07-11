@@ -47,7 +47,7 @@ jobs:
           - arch: armv7hf
             bin_name: pihole-FTL-armv7-linux-gnueabihf
           - arch: armv8a
-            bin_name: pihole-FTL-armv8-linux-gnueabihf
+            bin_name: pihole-FTL-astepsrmv8-linux-gnueabihf
           - arch: aarch64
             bin_name: pihole-FTL-aarch64-linux-gnu
 
@@ -103,13 +103,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
+        name: Checkout code
+        uses: actions/checkout@v3
+      -
         name: Get Binaries built in previous jobs
         uses: actions/download-artifact@v3
+        id: download
         with:
           name: tmp-binary-storage
+          path: ftl-builds/
       -
         name: Display structure of downloaded files
         run: ls -R
+        working-directory: ${{steps.download.outputs.download-path}}
       -
         name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
@@ -118,9 +124,15 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       -
         name: Transfer Builds to Pi-hole server for pihole checkout
+        env:
+          USER: ${{ secrets.SSH_USER }}
+          HOST: ${{ secrets.SSH_HOST }}
+          TARGET_DIR: ${{ needs.build.outputs.OUTPUT_DIR }}
+          SOURCE_DIR: ${{ steps.download.outputs.download-path }}
+          
         run: |
-          sftp -b - ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<< "-mkdir ${{ needs.build.outputs.OUTPUT_DIR }}
-          put * ${{ needs.build.outputs.OUTPUT_DIR }}"
+          bash ./deploy.sh
+
       -
         name: Attach binaries to release
         if: github.event_name == 'release'
