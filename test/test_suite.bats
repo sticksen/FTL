@@ -33,19 +33,19 @@
 }
 
 @test "Starting tests without prior history" {
-  run bash -c 'grep -c "Total DNS queries: 0" /var/log/pihole-FTL.log'
+  run bash -c 'grep -c "Total DNS queries: 0" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
 }
 
 @test "Initial blocking status is enabled" {
-  run bash -c 'grep -c "Blocking status is enabled" /var/log/pihole-FTL.log'
+  run bash -c 'grep -c "Blocking status is enabled" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
 }
 
 @test "Number of compiled regex filters as expected" {
-  run bash -c 'grep "Compiled [0-9]* whitelist" /var/log/pihole-FTL.log'
+  run bash -c 'grep "Compiled [0-9]* whitelist" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == *"Compiled 2 whitelist and 9 blacklist regex filters"* ]]
 }
@@ -159,31 +159,31 @@
 @test "Client 4: Client is recognized by MAC address" {
   run bash -c "dig TXT CHAOS version.bind -b 127.0.0.4 @127.0.0.1 +short"
   run sleep 0.1
-  run bash -c "grep -c \"Found database hardware address 127.0.0.4 -> aa:bb:cc:dd:ee:ff\" /var/log/pihole-FTL.log"
+  run bash -c "grep -c \"Found database hardware address 127.0.0.4 -> aa:bb:cc:dd:ee:ff\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c \"Gravity database: Client aa:bb:cc:dd:ee:ff found. Using groups (4)\" /var/log/pihole-FTL.log"
+  run bash -c "grep -c \"Gravity database: Client aa:bb:cc:dd:ee:ff found. Using groups (4)\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} != "0" ]]
-  run bash -c "grep -c 'Regex blacklist: Querying groups for client 127.0.0.4: \"SELECT id from vw_regex_blacklist WHERE group_id IN (4);\"' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex blacklist: Querying groups for client 127.0.0.4: \"SELECT id from vw_regex_blacklist WHERE group_id IN (4);\"' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'Regex whitelist: Querying groups for client 127.0.0.4: \"SELECT id from vw_regex_whitelist WHERE group_id IN (4);\"' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex whitelist: Querying groups for client 127.0.0.4: \"SELECT id from vw_regex_whitelist WHERE group_id IN (4);\"' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_whitelist WHERE domain = ? AND group_id IN (4));' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_whitelist WHERE domain = ? AND group_id IN (4));' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} != "0" ]]
-  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_blacklist WHERE domain = ? AND group_id IN (4));' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_blacklist WHERE domain = ? AND group_id IN (4));' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} != "0" ]]
-  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_gravity WHERE domain = ? AND group_id IN (4));' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_gravity WHERE domain = ? AND group_id IN (4));' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} != "0" ]]
-  run bash -c "grep -c 'Regex whitelist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.4' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex whitelist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.4' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "2" ]]
-  run bash -c "grep -c 'Regex blacklist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.4' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex blacklist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.4' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "9" ]]
 }
@@ -191,31 +191,31 @@
 @test "Client 5: Client is recognized by MAC address" {
   run bash -c "dig TXT CHAOS version.bind -b 127.0.0.5 @127.0.0.1 +short"
   run sleep 0.1
-  run bash -c "grep -c \"Found database hardware address 127.0.0.5 -> aa:bb:cc:dd:ee:ff\" /var/log/pihole-FTL.log"
+  run bash -c "grep -c \"Found database hardware address 127.0.0.5 -> aa:bb:cc:dd:ee:ff\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c \"Gravity database: Client aa:bb:cc:dd:ee:ff found. Using groups (4)\" /var/log/pihole-FTL.log"
+  run bash -c "grep -c \"Gravity database: Client aa:bb:cc:dd:ee:ff found. Using groups (4)\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} != "0" ]]
-  run bash -c "grep -c 'Regex blacklist: Querying groups for client 127.0.0.5: \"SELECT id from vw_regex_blacklist WHERE group_id IN (4);\"' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex blacklist: Querying groups for client 127.0.0.5: \"SELECT id from vw_regex_blacklist WHERE group_id IN (4);\"' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'Regex whitelist: Querying groups for client 127.0.0.5: \"SELECT id from vw_regex_whitelist WHERE group_id IN (4);\"' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex whitelist: Querying groups for client 127.0.0.5: \"SELECT id from vw_regex_whitelist WHERE group_id IN (4);\"' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_whitelist WHERE domain = ? AND group_id IN (4));' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_whitelist WHERE domain = ? AND group_id IN (4));' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} != "0" ]]
-  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_blacklist WHERE domain = ? AND group_id IN (4));' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_blacklist WHERE domain = ? AND group_id IN (4));' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} != "0" ]]
-  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_gravity WHERE domain = ? AND group_id IN (4));' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_gravity WHERE domain = ? AND group_id IN (4));' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} != "0" ]]
-  run bash -c "grep -c 'Regex whitelist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.5' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex whitelist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.5' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "2" ]]
-  run bash -c "grep -c 'Regex blacklist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.5' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex blacklist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.5' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "9" ]]
 }
@@ -223,37 +223,37 @@
 @test "Client 6: Client is recognized by interface name" {
   run bash -c "dig TXT CHAOS version.bind -b 127.0.0.6 @127.0.0.1 +short"
   run sleep 0.1
-  run bash -c "grep -c \"Found database hardware address 127.0.0.6 -> 00:11:22:33:44:55\" /var/log/pihole-FTL.log"
+  run bash -c "grep -c \"Found database hardware address 127.0.0.6 -> 00:11:22:33:44:55\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c \"There is no record for 00:11:22:33:44:55 in the client table\" /var/log/pihole-FTL.log"
+  run bash -c "grep -c \"There is no record for 00:11:22:33:44:55 in the client table\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c \"Found database interface 127.0.0.6 -> enp0s123\" /var/log/pihole-FTL.log"
+  run bash -c "grep -c \"Found database interface 127.0.0.6 -> enp0s123\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c \"Gravity database: Client 00:11:22:33:44:55 found (identified by interface enp0s123). Using groups (5)\" /var/log/pihole-FTL.log"
+  run bash -c "grep -c \"Gravity database: Client 00:11:22:33:44:55 found (identified by interface enp0s123). Using groups (5)\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'Regex blacklist: Querying groups for client 127.0.0.6: \"SELECT id from vw_regex_blacklist WHERE group_id IN (5);\"' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex blacklist: Querying groups for client 127.0.0.6: \"SELECT id from vw_regex_blacklist WHERE group_id IN (5);\"' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'Regex whitelist: Querying groups for client 127.0.0.6: \"SELECT id from vw_regex_whitelist WHERE group_id IN (5);\"' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex whitelist: Querying groups for client 127.0.0.6: \"SELECT id from vw_regex_whitelist WHERE group_id IN (5);\"' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_whitelist WHERE domain = ? AND group_id IN (5));' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_whitelist WHERE domain = ? AND group_id IN (5));' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_blacklist WHERE domain = ? AND group_id IN (5));' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_blacklist WHERE domain = ? AND group_id IN (5));' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_gravity WHERE domain = ? AND group_id IN (5));' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'get_client_querystr: SELECT EXISTS(SELECT domain from vw_gravity WHERE domain = ? AND group_id IN (5));' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c "grep -c 'Regex whitelist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.6' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex whitelist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.6' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "2" ]]
-  run bash -c "grep -c 'Regex blacklist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.6' /var/log/pihole-FTL.log"
+  run bash -c "grep -c 'Regex blacklist ([[:digit:]]*, DB ID [[:digit:]]*) .* NOT ENABLED for client 127.0.0.6' /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "9" ]]
 }
@@ -274,7 +274,7 @@
   run bash -c "dig A use-application-dns.net @127.0.0.1"
   printf "dig: %s\n" "${lines[@]}"
   [[ ${lines[3]} == *"status: NXDOMAIN"* ]]
-  run bash -c 'grep -c "Mozilla canary domain use-application-dns.net is NXDOMAIN" /var/log/pihole.log'
+  run bash -c 'grep -c "Mozilla canary domain use-application-dns.net is NXDOMAIN" /var/log/pihole/pihole.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
 }
@@ -652,48 +652,48 @@
   [[ ${lines[3]} == "Available arguments:" ]]
 }
 
-@test "No WARNING messages in pihole-FTL.log (besides known capability issues)" {
-  run bash -c 'grep "WARNING" /var/log/pihole-FTL.log'
+@test "No WARNING messages in FTL.log (besides known capability issues)" {
+  run bash -c 'grep "WARNING" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
-  run bash -c 'grep "WARNING" /var/log/pihole-FTL.log | grep -c -v -E "CAP_NET_ADMIN|CAP_NET_RAW|CAP_SYS_NICE|CAP_IPC_LOCK|CAP_CHOWN"'
-  printf "%s\n" "${lines[@]}"
-  [[ ${lines[0]} == "0" ]]
-}
-
-@test "No \"database not available\" messages in pihole-FTL.log" {
-  run bash -c 'grep -c "database not available" /var/log/pihole-FTL.log'
+  run bash -c 'grep "WARNING" /var/log/pihole/FTL.log | grep -c -v -E "CAP_NET_ADMIN|CAP_NET_RAW|CAP_SYS_NICE|CAP_IPC_LOCK|CAP_CHOWN"'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "0" ]]
 }
 
-@test "No ERROR messages in pihole-FTL.log" {
-  run bash -c 'grep "ERROR" /var/log/pihole-FTL.log'
-  printf "%s\n" "${lines[@]}"
-  run bash -c 'grep -c "ERROR" /var/log/pihole-FTL.log'
+@test "No \"database not available\" messages in FTL.log" {
+  run bash -c 'grep -c "database not available" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "0" ]]
 }
 
-@test "No FATAL messages in pihole-FTL.log (besides error due to starting FTL more than once)" {
-  run bash -c 'grep "FATAL" /var/log/pihole-FTL.log'
+@test "No ERROR messages in FTL.log" {
+  run bash -c 'grep "ERROR" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
-  run bash -c 'grep "FATAL:" /var/log/pihole-FTL.log | grep -c -v "FATAL: create_shm(): Failed to create shared memory object \"FTL-lock\": File exists"'
+  run bash -c 'grep -c "ERROR" /var/log/pihole/FTL.log'
+  printf "%s\n" "${lines[@]}"
+  [[ ${lines[0]} == "0" ]]
+}
+
+@test "No FATAL messages in FTL.log (besides error due to starting FTL more than once)" {
+  run bash -c 'grep "FATAL" /var/log/pihole/FTL.log'
+  printf "%s\n" "${lines[@]}"
+  run bash -c 'grep "FATAL:" /var/log/pihole/FTL.log | grep -c -v "FATAL: create_shm(): Failed to create shared memory object \"FTL-lock\": File exists"'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "0" ]]
 }
 
 # Regex tests
 @test "Compiled blacklist regex as expected" {
-  run bash -c 'grep -c "Compiling blacklist regex 0 (DB ID 6): regex\[0-9\].ftl" /var/log/pihole-FTL.log'
+  run bash -c 'grep -c "Compiling blacklist regex 0 (DB ID 6): regex\[0-9\].ftl" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
 }
 
 @test "Compiled whitelist regex as expected" {
-  run bash -c 'grep -c "Compiling whitelist regex 0 (DB ID 3): regex2" /var/log/pihole-FTL.log'
+  run bash -c 'grep -c "Compiling whitelist regex 0 (DB ID 3): regex2" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c 'grep -c "Compiling whitelist regex 1 (DB ID 4): ^gravity-whitelisted" /var/log/pihole-FTL.log'
+  run bash -c 'grep -c "Compiling whitelist regex 1 (DB ID 4): ^gravity-whitelisted" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
 }
@@ -1078,21 +1078,21 @@
 }
 
 @test "Architecture is correctly reported on startup" {
-  run bash -c 'grep "Compiled for" /var/log/pihole-FTL.log'
+  run bash -c 'grep "Compiled for" /var/log/pihole/FTL.log'
   printf "Output: %s\n\$CI_ARCH: %s\nuname -m: %s\n" "${lines[@]:-not set}" "${CI_ARCH:-not set}" "$(uname -m)"
   [[ ${lines[0]} == *"Compiled for ${CI_ARCH:-$(uname -m)}"* ]]
 }
 
 @test "Building machine (CI) is reported on startup" {
   [[ ${CI_ARCH} != "" ]] && compiled_str="on CI" || compiled_str="locally" && export compiled_str
-  run bash -c 'grep "Compiled for" /var/log/pihole-FTL.log'
+  run bash -c 'grep "Compiled for" /var/log/pihole/FTL.log'
   printf "Output: %s\n\$CI_ARCH: %s\n" "${lines[@]:-not set}" "${CI_ARCH:-not set}"
   [[ ${lines[0]} == *"(compiled ${compiled_str})"* ]]
 }
 
 @test "Compiler version is correctly reported on startup" {
   compiler_version="$(${CC} --version | head -n1)" && export compiler_version
-  run bash -c 'grep "Compiled for" /var/log/pihole-FTL.log'
+  run bash -c 'grep "Compiled for" /var/log/pihole/FTL.log'
   printf "Output: %s\n\$CC: %s\nVersion: %s\n" "${lines[@]:-not set}" "${CC:-not set}" "${compiler_version:-not set}"
   [[ ${lines[0]} == *"using ${compiler_version}"* ]]
 }
@@ -1104,13 +1104,13 @@
 }
 
 @test "No errors on setting busy handlers for the databases" {
-  run bash -c 'grep -c "Cannot set busy handler" /var/log/pihole-FTL.log'
+  run bash -c 'grep -c "Cannot set busy handler" /var/log/pihole/FTL.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "0" ]]
 }
 
 @test "Blocking status is correctly logged in pihole.log" {
-  run bash -c 'grep -c "gravity blocked gravity.ftl is 0.0.0.0" /var/log/pihole.log'
+  run bash -c 'grep -c "gravity blocked gravity.ftl is 0.0.0.0" /var/log/pihole/pihole.log'
   printf "%s\n" "${lines[@]}"
   [[ ${lines[0]} == "2" ]]
 }
@@ -1136,7 +1136,7 @@
 
 @test "EDNS(0) analysis working as expected" {
   # Get number of lines in the log before the test
-  before="$(grep -c ^ /var/log/pihole-FTL.log)"
+  before="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Run test command
   #                                  CLIENT SUBNET          COOKIE                       MAC HEX                     MAC TEXT                                          CPE-ID
@@ -1146,10 +1146,10 @@
   [[ $status == 0 ]]
 
   # Get number of lines in the log after the test
-  after="$(grep -c ^ /var/log/pihole-FTL.log)"
+  after="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Extract relevant log lines
-  log="$(sed -n "${before},${after}p" /var/log/pihole-FTL.log)"
+  log="$(sed -n "${before},${after}p" /var/log/pihole/FTL.log)"
   printf "%s\n" "${log}"
 
   # Start actual test
@@ -1172,7 +1172,7 @@
 
 @test "EDNS(0) ECS can overwrite client address (IPv4)" {
   # Get number of lines in the log before the test
-  before="$(grep -c ^ /var/log/pihole-FTL.log)"
+  before="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Run test command
   run bash -c 'dig localhost +short +subnet=192.168.47.97/32 @127.0.0.1'
@@ -1181,17 +1181,17 @@
   [[ $status == 0 ]]
 
   # Get number of lines in the log after the test
-  after="$(grep -c ^ /var/log/pihole-FTL.log)"
+  after="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Extract relevant log lines
-  run bash -c "sed -n \"${before},${after}p\" /var/log/pihole-FTL.log"
+  run bash -c "sed -n \"${before},${after}p\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ "${lines[@]}" == *"**** new UDP IPv4 query[A] query \"localhost\" from lo/192.168.47.97#53 "* ]]
 }
 
 @test "EDNS(0) ECS can overwrite client address (IPv6)" {
   # Get number of lines in the log before the test
-  before="$(grep -c ^ /var/log/pihole-FTL.log)"
+  before="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Run test command
   run bash -c 'dig localhost +short +subnet=fe80::b167:af1e:968b:dead/128 @127.0.0.1'
@@ -1200,29 +1200,29 @@
   [[ $status == 0 ]]
 
   # Get number of lines in the log after the test
-  after="$(grep -c ^ /var/log/pihole-FTL.log)"
+  after="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Extract relevant log lines
-  run bash -c "sed -n \"${before},${after}p\" /var/log/pihole-FTL.log"
+  run bash -c "sed -n \"${before},${after}p\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ "${lines[@]}" == *"**** new UDP IPv4 query[A] query \"localhost\" from lo/fe80::b167:af1e:968b:dead#53 "* ]]
 }
 
 @test "alias-client is imported and used for configured client" {
-  run bash -c 'grep -c "Added alias-client \"some-aliasclient\" (aliasclient-0) with FTL ID 0" /var/log/pihole-FTL.log'
+  run bash -c 'grep -c "Added alias-client \"some-aliasclient\" (aliasclient-0) with FTL ID 0" /var/log/pihole/FTL.log'
   printf "Added: %s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c 'grep -c "Aliasclient ID 127.0.0.6 -> 0" /var/log/pihole-FTL.log'
+  run bash -c 'grep -c "Aliasclient ID 127.0.0.6 -> 0" /var/log/pihole/FTL.log'
   printf "Found ID: %s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
-  run bash -c 'grep -c "Client .* (127.0.0.6) IS  managed by this alias-client, adding counts" /var/log/pihole-FTL.log'
+  run bash -c 'grep -c "Client .* (127.0.0.6) IS  managed by this alias-client, adding counts" /var/log/pihole/FTL.log'
   printf "Adding counts: %s\n" "${lines[@]}"
   [[ ${lines[0]} == "1" ]]
 }
 
 @test "EDNS(0) ECS skipped for loopback address (IPv4)" {
   # Get number of lines in the log before the test
-  before="$(grep -c ^ /var/log/pihole-FTL.log)"
+  before="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Run test command
   run bash -c 'dig localhost +short +subnet=127.0.0.1/32 @127.0.0.1'
@@ -1231,17 +1231,17 @@
   [[ $status == 0 ]]
 
   # Get number of lines in the log after the test
-  after="$(grep -c ^ /var/log/pihole-FTL.log)"
+  after="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Extract relevant log lines
-  run bash -c "sed -n \"${before},${after}p\" /var/log/pihole-FTL.log"
+  run bash -c "sed -n \"${before},${after}p\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ "${lines[@]}" == *"EDNS(0) CLIENT SUBNET: Skipped 127.0.0.1/32 (IPv4 loopback address)"* ]]
 }
 
 @test "EDNS(0) ECS skipped for loopback address (IPv6)" {
   # Get number of lines in the log before the test
-  before="$(grep -c ^ /var/log/pihole-FTL.log)"
+  before="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Run test command
   run bash -c 'dig localhost +short +subnet=::1/128 @127.0.0.1'
@@ -1250,10 +1250,10 @@
   [[ $status == 0 ]]
 
   # Get number of lines in the log after the test
-  after="$(grep -c ^ /var/log/pihole-FTL.log)"
+  after="$(grep -c ^ /var/log/pihole/FTL.log)"
 
   # Extract relevant log lines
-  run bash -c "sed -n \"${before},${after}p\" /var/log/pihole-FTL.log"
+  run bash -c "sed -n \"${before},${after}p\" /var/log/pihole/FTL.log"
   printf "%s\n" "${lines[@]}"
   [[ "${lines[@]}" == *"EDNS(0) CLIENT SUBNET: Skipped ::1/128 (IPv6 loopback address)"* ]]
 }
@@ -1325,4 +1325,48 @@
   run bash -c "dig AAAA blacklisted.ftl +short @127.0.0.1"
   printf "%s\n" "${lines[@]}"
   [[ "${lines[0]}" == "fe80::11" ]]
+}
+
+@test "Reported default gateway is correct" {
+  routes="$(ip -4 route show default)"
+  ipaddr="$(awk '{print $3}' <<< $routes)"
+  interf="$(awk '{print $5}' <<< $routes)"
+  printf "ip -4 route show default: %s\n" "${routes}"
+  run bash -c 'echo ">gateway >quit" | nc 127.0.0.1 4711'
+  ftlip="$(awk '{print $1}' <<< "${lines[0]}")"
+  ftlif="$(awk '{print $2}' <<< "${lines[0]}")"
+  printf "%s\n" "${lines[@]}"
+  # Check gateway IP address
+  printf "Checking IP: %s == %s\n" "$ftlip" "$ipaddr"
+  [[ "$ftlip" == "$ipaddr" ]]
+  # Check gateway interface
+  printf "Checking IF: %s == %s\n" "$ftlif" "$interf"
+  [[ "$ftlif" == "$interf" ]]
+}
+
+@test "Reported interface statistics are as expected" {
+  routes="$(ip -4 route show default)"
+  interf="$(awk '{print $5}' <<< $routes)"
+  printf "ip -4 route show default: %s\n" "${routes}"
+  run bash -c 'echo ">interfaces >quit" | nc 127.0.0.1 4711'
+  firstiface="$(awk '{print $1}' <<< "${lines[0]}")"
+  firstcarrier="$(awk '{print $2}' <<< "${lines[0]}")"
+  firstnum="$(awk '{print NF}' <<< "${lines[0]}")"
+  lastiface="$(awk '{print $1}' <<< "${lines[-1]}")"
+  lastcarrier="$(awk '{print $2}' <<< "${lines[-1]}")"
+  lastspeed="$(awk '{print $3}' <<< "${lines[-1]}")"
+  lastnum="$(awk '{print NF}' <<< "${lines[-1]}")"
+  printf "%s\n" "${lines[@]}"
+  # Check default interface is reported in first line
+  printf "Checking IF: %s == %s\n" "$firstiface" "$interf"
+  [[ "$firstiface" == "$interf" ]]
+  # Check default interface is reported as being UP
+  [[ "$firstcarrier" == "UP" ]]
+  # Check last reported record is the sum
+  [[ "$lastiface" == "sum" ]]
+  [[ "$lastcarrier" == "UP" ]]
+  [[ "$lastspeed" == "0" ]]
+  # Check we are reporting seven quantities for the interfaces
+  [[ "$firstnum" == 7 ]]
+  [[ "$lastnum" == 7 ]]
 }
