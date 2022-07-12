@@ -18,6 +18,13 @@
 
 IFS=/ read -r -a path <<<"${TARGET_DIR}"
 
+# Safeguard: do not deploy if more than one subdir (eg. /tweak/feature/subfeature) needs to be created
+
+if [[ "${#path[@]}" -gt 2 ]]; then
+    echo "Error: Your branch name contains more then one subdir. We won't deploy that."
+    exit 1
+fi
+
 old_path="."
 
 for dir in "${path[@]}"; do
