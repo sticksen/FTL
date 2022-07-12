@@ -12,6 +12,45 @@ on:
     types: [published]
 
 jobs:
+  smoke-test:
+    if: | 
+      github.event_name == 'push'
+      || github.event_name == 'release'
+      || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository)
+    
+    outputs:
+      GIT_TAG: ${{ steps.variables.outputs.GIT_TAG }}
+      GIT_BRANCH: ${{ steps.variables.outputs.GIT_BRANCH }}
+      OUTPUT_DIR: ${{ steps.variables.outputs.OUTPUT_DIR }}
+    
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout code
+        uses: actions/checkout@v3
+      -
+        name: "Calculate required variables"
+        id: variables
+        run: |
+          GIT_TAG=${{ github.event.release.tag_name }}
+          # If GIT_TAG is set then GIT BRANCH should be "master", else set it from GITHUB_REF
+          GIT_BRANCH=$([ -n "${GIT_TAG}" ] && echo "master" || echo "${GITHUB_REF#refs/*/}")
+          echo ::set-output name=GIT_BRANCH::${GIT_BRANCH}
+          echo ::set-output name=GIT_TAG::${GIT_TAG}
+          echo ::set-output name=OUTPUT_DIR::${GIT_TAG:-${GIT_BRANCH}}
+      -
+        name: "Check git branch name depth"
+        env:
+          GIT_BRANCH: ${{ steps.variables.outputs.GIT_BRANCH }}
+        run: |
+          IFS='/';
+          read -r -a branch <<<"${GIT_BRANCH}";
+          if [[ "${#branch[@]}" -gt 2 ]]; then echo "Error: Your branch name contains more then one subdir. We won't build that." && FAIL=1; fi;
+          unset IFS;
+          # If FAIL is 1 then we fail.
+          [[ $FAIL == 1 ]] && exit 1 || echo "Branch name depth check passed."
+        shell: bash
+
   build:
     if: |
       github.event_name == 'push'
@@ -24,6 +63,8 @@ jobs:
       OUTPUT_DIR: ${{ steps.variables.outputs.OUTPUT_DIR }}
 
     runs-on: ubuntu-latest
+    
+    needs: smoke-test
 
     container: ghcr.io/pi-hole/ftl-build:v1.16-${{ matrix.arch }}
 
@@ -47,7 +88,7 @@ jobs:
           - arch: armv7hf
             bin_name: pihole-FTL-armv7-linux-gnueabihf
           - arch: armv8a
-            bin_name: pihole-FTL-astepsrmv8-linux-gnueabihf
+            bin_name: pihole-FTL-armv8-linux-gnueabihf
           - arch: aarch64
             bin_name: pihole-FTL-aarch64-linux-gnu
 
@@ -59,7 +100,7 @@ jobs:
         name: Checkout code
         uses: actions/checkout@v3
       -
-        name: Calculate required build variables
+        name: "Calculate required build variables"
         id: variables
         run: |
           GIT_TAG=${{ github.event.release.tag_name }}
