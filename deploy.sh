@@ -13,7 +13,7 @@
 # Transfer Builds to Pi-hole server for pihole checkout
 # We use sftp for secure transfer and use the branch name as dir on the server.
 # The branch name could contain slashes, creating hierarchical dirs. However,
-# this is not supported by sftp's `mkdir` (option -p) is not availabe. Therefore,
+# this is not supported by sftp's `mkdir` (option -p) is not available. Therefore,
 # we need to loop over each dir level and create them one by one.
 
 IFS='/'
