@@ -16,6 +16,13 @@
 # this is not supported by sftp's `mkdir` (option -p) is not available. Therefore,
 # we need to loop over each dir level and create them one by one.
 
+
+# Safeguard: do not deploy if TARGET_DIR is empty
+if [[ -z ${TARGET_DIR} ]]; then
+    echo "Error: Empty target dir."
+    exit 1
+fi
+
 IFS='/'
 read -r -a path <<<"${TARGET_DIR}"
 
@@ -24,6 +31,7 @@ if [[ "${#path[@]}" -gt 2 ]]; then
     echo "Error: Your branch name contains more then one subdir. We won't deploy that."
     exit 1
 fi
+
 unset IFS
 
 old_path="."
